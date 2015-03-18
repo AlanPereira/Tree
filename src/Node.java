@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Node {
 
-	private Node root;
+	private Node parent;
 	private Object element;
 	private ArrayList<Node> children;
 	
@@ -23,12 +23,12 @@ public class Node {
 		this.element = element;
 	}
 
-	public Node getRoot() {
-		return root;
+	public Node getParent() {
+		return parent;
 	}
 
-	public void setRoot(Node root) {
-		this.root = root;
+	public void setParent(Node parent) {
+		this.parent = parent;
 	}
 
 	public ArrayList<Node> getChildren() {

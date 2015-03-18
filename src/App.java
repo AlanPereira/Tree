@@ -3,7 +3,8 @@ public class App {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-//teste
+		
+		Tree<String> teste = new Tree<String>();
 	}
 
 }

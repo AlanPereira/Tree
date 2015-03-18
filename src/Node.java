@@ -37,6 +37,9 @@ public class Node {
 
 	public void setChildren(ArrayList<Node> children) {
 		this.children = children;
-	}	
+	}
+	public void addChildren(Node node){
+		children.add(node);
+	}
 	
 }

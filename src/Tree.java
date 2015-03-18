@@ -13,7 +13,12 @@ public class Tree <E>{
 		return size;
 	}
 	
-	public void add(E e, Node pai){}//Será necessario? por default ele é sempre um parent
+	public void addNode(E element, Node parent){
+		Node node = new Node();
+		node.setParent(parent);
+		parent.addChildren(node);
+		
+	}//Será necessario? por default ele é sempre um parent
 	
 	public void addParent (E e) {
 		Node novoNo = new Node(e);
@@ -21,9 +26,6 @@ public class Tree <E>{
 			getRoot().getChildren().add(novoNo);
 	}
 	
-	public void addParent (Tree subtree) {
-		
-	}
 
 	public boolean empty(){
 		if(getRoot() == null){

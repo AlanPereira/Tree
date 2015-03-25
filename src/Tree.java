@@ -5,7 +5,6 @@ import java.util.List;
 public class Tree <E>{
 
 	private Node root;
-	
 
 	public Tree(){
 		setRoot(new Node());
@@ -40,8 +39,10 @@ public class Tree <E>{
 		}
 	}
 	
-	
-	
+	private E find(Node no){
+		return null;
+	}
+
 	public Tree<E> find(E e){
 		Node node = find(e, getRoot());
 		if(!node.equals(null)){
@@ -52,7 +53,6 @@ public class Tree <E>{
 		return null;
 	}
 	
-	
 	public List<Tree<E>> children (){
 		ArrayList<Tree<E>> list = new ArrayList<Tree<E>>();
 		for(Node node:this.getRoot().getChildren()){
@@ -62,7 +62,6 @@ public class Tree <E>{
 		}
 		return list;
 	}
-	
 	
 	public boolean isExternal(){
 		return this.getRoot().getChildren().isEmpty();
@@ -80,34 +79,15 @@ public class Tree <E>{
 		return false;
 	}
 		
-	
 	public void add(E element, Tree<E> e){
 		
 		//
 		
 	}
-	
-	public void addParent (E e) {
-		Node novoNo = new Node(e);
-		if(novoNo !=null)
-			getRoot().getChildren().add(novoNo);
-	}
-	
-
-	public boolean empty(){
-		if(getRoot() == null){
-			return true;
-		}
-		return false;
-	}
 
 	public boolean add(E e){
 		boolean ok =true;
 		return ok;
-	}
-
-	public void add(int i, E e){
-	
 	}
 
 	public boolean remove(E e){
@@ -116,22 +96,11 @@ public class Tree <E>{
 		return ok;
 	}
 
-	/*
+	
 	public E remove(int i){
 		
-		return p;
-	} */
-	
-	
-	/*
-	public E find(int i){
-		
-	}*/
-
-	/*
-	public int numOrdem(E e){
-	
-	}*/
+		return null;
+	} 
 
 	public void destroy(){
 		

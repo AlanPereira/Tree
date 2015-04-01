@@ -5,12 +5,12 @@ import java.util.List;
 public class Tree <E>{
 
 	private Node root;
-	
-	//Terá que melhorá
+
 	public Tree<E> parent(){
 		Tree<E> tree = new Tree<E>();
-		tree.setRoot(this.getRoot().getParent());
-		
+		if(!this.root.equals(null)){
+			tree.setRoot(this.getRoot().getParent());
+		}
 		return tree;
 		
 	}
@@ -86,11 +86,11 @@ public class Tree <E>{
 		return !this.isExternal();
 	}
 	
-	//precisa mellhora
 	public boolean isRoot(){
 				
-		if(null==this.getRoot().getParent()){
-			return true;
+		if(!this.root.equals(null)){
+			if(this.root.getParent().equals(null))
+				return true;
 		}
 		return false;
 	}

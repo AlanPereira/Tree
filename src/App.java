@@ -6,6 +6,8 @@ public class App {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
+		//Tree<String> tree = new Tree<String>();
+		
 		ArrayList<String> t = new ArrayList<String>();
 		for(int i= 0; i<10;i++){
 			t.add("!"+i);

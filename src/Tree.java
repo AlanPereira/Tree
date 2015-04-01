@@ -243,4 +243,29 @@ public class Tree <E>{
 	public void posOrder(){
 		posOrder(this.root);
 	}
+
+	public int depth(Tree<E> subTree){//profundidade
+		return size(subTree.getRoot())-1;
+	}
+	
+	public int height(Node no){
+		if(no.equals(null))
+			return 0;
+		else if(no.getChildren().isEmpty()){
+			return 1;
+		}else{
+			int i = 0, tam = 0, height=0;
+			Node n;
+			do{
+				n = no.getChildren().get(i);
+				tam = height(n);
+				if(height<tam){
+					height = tam;
+				}
+				i++;
+			}while(no.getChildren().size()<i);
+			
+			return height + 1;
+		}
+	}
 }

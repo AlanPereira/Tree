@@ -199,4 +199,48 @@ public class Tree <E>{
 			no.setElement(e);
 		}
 	}
+
+	private void preOrder(Node no){
+		if(no.equals(null)){
+			return ;
+		}
+		else if(no.getChildren().isEmpty()){
+			System.out.println(no.getElement());
+		}else{
+			int i = 0;
+			Node n;
+			do{
+				System.out.println(no.getElement());
+				n = no.getChildren().get(i);
+				preOrder(n);
+				i++;
+			}while(no.getChildren().size()<i);
+		}
+	}
+	
+	public void preOrder(){
+		preOrder(this.root);
+	}
+	
+	private void posOrder(Node no){
+		if(no.equals(null)){
+			return ;
+		}
+		else if(no.getChildren().isEmpty()){
+			System.out.println(no.getElement());
+		}else{
+			int i = 0;
+			Node n;
+			do{
+				n = no.getChildren().get(i);
+				preOrder(n);
+				i++;
+			}while(no.getChildren().size()<i);
+			System.out.println(no.getElement());
+		}
+	}
+	
+	public void posOrder(){
+		posOrder(this.root);
+	}
 }

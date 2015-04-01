@@ -5,12 +5,8 @@ import java.util.List;
 public class Tree <E>{
 
 	private Node root;
-
-	public Tree(){
-		setRoot(new Node());
-		
-	}	
 	
+	//Terá que melhorá
 	public Tree<E> parent(){
 		Tree<E> tree = new Tree<E>();
 		tree.setRoot(this.getRoot().getParent());
@@ -19,34 +15,53 @@ public class Tree <E>{
 		
 	}
 	
-	private Node find(E e, Node no){
-		Node n;
-		if(no.getElement().equals(e)){
+	private Node find(Node no, Node root){
+		if(root.equals(no))
 			return no;
-		}else if(!no.getChildren().isEmpty()){
+		else if(!root.getChildren().isEmpty()){
 			return null;
 		}else {
-			int i =0;boolean ok =false;
+			int i =0;
+			boolean ok = true;
+			Node n;
 			do{
-				n = find(e, no.getChildren().get(i));
-				if(!(n==null)){
-					ok = true;
+				n = find(no, root.getChildren().get(i));
+				if((no.equals(n))){
+					ok = false;
 				}
 				i++;
-			}while(ok || no.getChildren().size()<i);
+			}while(ok && root.getChildren().size()<i);
 			
 			return n;
 		}
 	}
 	
-	private E find(Node no){
-		return null;
+	private Node find(E e, Node no){
+		
+		if(no.getElement().equals(e)){
+			return no;
+		}else if(!no.getChildren().isEmpty()){
+			return null;
+		}else {
+			int i =0;
+			boolean ok =true;
+			Node n;
+			do{
+				n = find(e, no.getChildren().get(i));
+				if(!(n==null)){
+					ok = false;
+				}
+				i++;
+			}while(ok && no.getChildren().size()<i);
+			
+			return n;
+		}
 	}
 
 	public Tree<E> find(E e){
 		Node node = find(e, getRoot());
 		if(!node.equals(null)){
-			Tree<E> t =new Tree<E>();
+			Tree<E> t = new Tree<E>();
 			t.setRoot(node);
 			return t;
 		}
@@ -71,6 +86,7 @@ public class Tree <E>{
 		return !this.isExternal();
 	}
 	
+	//precisa mellhora
 	public boolean isRoot(){
 				
 		if(null==this.getRoot().getParent()){
@@ -78,32 +94,71 @@ public class Tree <E>{
 		}
 		return false;
 	}
-		
-	public void add(E element, Tree<E> e){
-		
-		//
-		
-	}
 
-	public boolean add(E e){
-		boolean ok =true;
-		return ok;
+	public void setElement(E e){
+		this.root.setElement(e);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public E getElement(){
+		return (E) this.root.getElement();
+	}
+	
+	public void add(E e){
+		Node node = new Node(e);
+		if(isEmpty()){
+			setRoot(node);
+		}else{
+			node.setParent(getRoot());
+			getRoot().addChildren(node);
+		}
+	}
+	
+	public void add(Tree<E> subTree){
+		if(isEmpty()){
+			setRoot(subTree.getRoot());
+		}else{
+			subTree.getRoot().setParent(getRoot());
+			getRoot().addChildren(subTree.getRoot());
+		}
+			
 	}
 
 	public boolean remove(E e){
 		boolean ok = false;
-		
+		Node node = find(e, this.root);
+		if(node != null){
+			node.setElement(null);
+			ok = true;
+		}
+		return ok;
+	}
+	
+	public boolean remove(Tree<E> subTree){
+		boolean ok = false;
+		Node node = find(subTree.getRoot(), this.root);
+		if(node != null){
+			if(getRoot().equals(node)){
+				this.root = null;
+			}else{
+				node.getParent().getChildren().remove(node);
+				node.setParent(null);
+				node.setChildren(null);
+				node= null;
+			}
+			ok = true;
+		}
 		return ok;
 	}
 
+	public boolean isEmpty(){
+		if(this.root == null)
+			return true;
+		return false;
+	}
 	
-	public E remove(int i){
-		
-		return null;
-	} 
-
 	public void destroy(){
-		
+		this.root = null;
 	}
 
 	protected Node getRoot() {
@@ -115,4 +170,33 @@ public class Tree <E>{
 	}
 
 	
+	private int size(Node no){
+		if(no.equals(null)){
+			return 0;
+		}
+		else if(no.getChildren().isEmpty()){
+			return 1;
+		}else{
+			int i = 0, size =1;
+			Node n;
+			do{
+				n = no.getChildren().get(i);
+				size = size + size(n);
+				i++;
+			}while(no.getChildren().size()<i);
+			
+			return size;
+		}
+	}
+	
+	public int getSize() {
+		return size(getRoot());
+	}
+
+	public void replace(E e, Tree<E> subTree){
+		Node no = find(subTree.getRoot(), getRoot());
+		if(!no.equals(null)){
+			no.setElement(e);
+		}
+	}
 }

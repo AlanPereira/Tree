@@ -12,13 +12,13 @@ public class Tree <E>{
 			tree.setRoot(this.getRoot().getParent());
 		}
 		return tree;
-		
+
 	}
-	
+
 	private Node find(Node no, Node root){
 		if(root.equals(no))
 			return no;
-		else if(!root.getChildren().isEmpty()){
+		else if(root.getChildren().isEmpty()){
 			return null;
 		}else {
 			int i =0;
@@ -31,16 +31,16 @@ public class Tree <E>{
 				}
 				i++;
 			}while(ok && root.getChildren().size()<i);
-			
+
 			return n;
 		}
 	}
-	
+
 	private Node find(E e, Node no){
-		
+
 		if(no.getElement().equals(e)){
 			return no;
-		}else if(!no.getChildren().isEmpty()){
+		}else if(no.getChildren().isEmpty()){
 			return null;
 		}else {
 			int i =0;
@@ -53,7 +53,7 @@ public class Tree <E>{
 				}
 				i++;
 			}while(ok && no.getChildren().size()<i);
-			
+
 			return n;
 		}
 	}
@@ -67,7 +67,7 @@ public class Tree <E>{
 		}
 		return null;
 	}
-	
+
 	public List<Tree<E>> children (){
 		ArrayList<Tree<E>> list = new ArrayList<Tree<E>>();
 		for(Node node:this.getRoot().getChildren()){
@@ -77,17 +77,17 @@ public class Tree <E>{
 		}
 		return list;
 	}
-	
+
 	public boolean isExternal(){
 		return this.getRoot().getChildren().isEmpty();
 	}
-	
+
 	public boolean isInternal(){
 		return !this.isExternal();
 	}
-	
+
 	public boolean isRoot(){
-				
+
 		if(!this.root.equals(null)){
 			if(this.root.getParent().equals(null))
 				return true;
@@ -98,12 +98,12 @@ public class Tree <E>{
 	public void setElement(E e){
 		this.root.setElement(e);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public E getElement(){
 		return (E) this.root.getElement();
 	}
-	
+
 	public void add(E e){
 		Node node = new Node(e);
 		if(isEmpty()){
@@ -113,7 +113,7 @@ public class Tree <E>{
 			getRoot().addChildren(node);
 		}
 	}
-	
+
 	public void add(Tree<E> subTree){
 		if(isEmpty()){
 			setRoot(subTree.getRoot());
@@ -121,7 +121,7 @@ public class Tree <E>{
 			subTree.getRoot().setParent(getRoot());
 			getRoot().addChildren(subTree.getRoot());
 		}
-			
+
 	}
 
 	public boolean remove(E e){
@@ -133,7 +133,7 @@ public class Tree <E>{
 		}
 		return ok;
 	}
-	
+
 	public boolean remove(Tree<E> subTree){
 		boolean ok = false;
 		Node node = find(subTree.getRoot(), this.root);
@@ -156,7 +156,7 @@ public class Tree <E>{
 			return true;
 		return false;
 	}
-	
+
 	public void destroy(){
 		this.root = null;
 	}
@@ -169,7 +169,7 @@ public class Tree <E>{
 		this.root = root;
 	}
 
-	
+
 	private int size(Node no){
 		if(no.equals(null)){
 			return 0;
@@ -184,11 +184,11 @@ public class Tree <E>{
 				size = size + size(n);
 				i++;
 			}while(no.getChildren().size()<i);
-			
+
 			return size;
 		}
 	}
-	
+
 	public int getSize() {
 		return size(getRoot());
 	}
@@ -209,19 +209,20 @@ public class Tree <E>{
 		}else{
 			int i = 0;
 			Node n;
+			System.out.println(no.getElement());
 			do{
-				System.out.println(no.getElement());
 				n = no.getChildren().get(i);
-				preOrder(n);
 				i++;
-			}while(no.getChildren().size()<i);
+				preOrder(n);
+
+			}while(no.getChildren().size()>i);
 		}
 	}
-	
+
 	public void preOrder(){
 		preOrder(this.root);
 	}
-	
+
 	private void posOrder(Node no){
 		if(no.equals(null)){
 			return ;
@@ -233,22 +234,33 @@ public class Tree <E>{
 			Node n;
 			do{
 				n = no.getChildren().get(i);
-				preOrder(n);
+				posOrder(n);
 				i++;
-			}while(no.getChildren().size()<i);
+			}while(no.getChildren().size()>i);
 			System.out.println(no.getElement());
 		}
 	}
-	
+
 	public void posOrder(){
 		posOrder(this.root);
 	}
 
 	public int depth(Tree<E> subTree){//profundidade
-		return size(subTree.getRoot())-1;
+
+
+		Node no = subTree.getRoot();
+		int i =0;
+
+		no = no.getParent();
+		while(no!=null){
+			no = no.getParent();
+			i++;
+		}
+		return i;		
+
 	}
-	
-	public int height(Node no){
+
+	private int height(Node no){
 		if(no.equals(null))
 			return 0;
 		else if(no.getChildren().isEmpty()){
@@ -264,8 +276,12 @@ public class Tree <E>{
 				}
 				i++;
 			}while(no.getChildren().size()<i);
-			
-			return height + 1;
-		}
+
+			return height+1;
+		}	
+	}
+
+	public int height(Tree<E> subtree){
+		return height(subtree.getRoot())-1;
 	}
 }

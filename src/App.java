@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 
+import Tree.Tree;
+import TreeBinary.TreeBinary;
+
 
 public class App {
 
@@ -18,40 +21,33 @@ public class App {
 //		}
 		
 		
-		Tree<String> node1 = new Tree<String>();
-		node1.add("Root");
-		
-		Tree<String> node2 = new Tree<String>();
-		node2.add("A");
-		Tree<String> node3 = new Tree<String>();
-		node3.add("B");
-		Tree<String> node4 = new Tree<String>();
-		node4.add("C");
-		
-		Tree<String> node5 = new Tree<String>();
-		node5.add("D");
-		
-		Tree<String> node6 = new Tree<String>();
-		node6.add("E");
-		
+		TreeBinary<String> node1 = new TreeBinary<String>();
+		node1.addRoot("Root");
 			
+		TreeBinary<String> node2 = new TreeBinary<String>("A");
+		TreeBinary<String> node3 = new TreeBinary<String>("B");
+		TreeBinary<String> node4 = new TreeBinary<String>("C");
+		TreeBinary<String> node5 = new TreeBinary<String>("D");
+		TreeBinary<String> node6 = new TreeBinary<String>("E");			
+
 		
-		node1.add(node2);
-		node1.add(node3);
-		node1.add(node4);
-		node2.add(node5);
-		node2.add(node6);	
+		
+		node1.left(node2);
+		node1.right(node3);
+		node2.left(node4);
+		node6.right(node5);
+		node3.left(node6);	
 		
 		System.out.println("PosOrder\n");
-		node1.posOrder();
+		node1.posOrder(node1);
 		System.out.println("\n----------");
 		
 		System.out.println("PreOrder\n");
-		node1.preOrder();
+		node1.preOrder(node1);
 		System.out.println("\n----------");
 		
 		
-		System.out.println("Altura: "+node1.height(node3));
-		System.out.println("Profundidade: "+node1.depth(node3));
+		System.out.println("Altura: "+node1.height(node5));
+		System.out.println("Profundidade: "+node1.depth(node5));
 	}
 }

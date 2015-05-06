@@ -6,15 +6,15 @@ public class TreeBinary <E>{
 
 	private BTNode root;
 
-	
+
 	public TreeBinary(E e){
 		BTNode node = new BTNode(e);
 		setRoot(node);
 	}
 	public TreeBinary(){
-		
+
 	}
-	
+
 	protected BTNode getRoot() {
 		return root;
 	}
@@ -119,6 +119,7 @@ public class TreeBinary <E>{
 		}
 	}
 
+
 	private boolean hasLeft(BTNode node){
 		if(node.getLeft() == null)
 			return false;
@@ -215,7 +216,7 @@ public class TreeBinary <E>{
 			return ;
 		}
 
-		System.out.println(no.getElement());
+		System.out.print(no.getElement()+" ");
 
 		if(hasLeft(no))
 			preOrder(no.getLeft());
@@ -232,14 +233,14 @@ public class TreeBinary <E>{
 		if(no == null){
 			return ;
 		}
-		
+
 		if(hasLeft(no))
 			posOrder(no.getLeft());
 
 		if(hasRight(no))
 			posOrder(no.getRight());
 
-		System.out.println(no.getElement());
+		System.out.print(no.getElement()+" ");
 	}
 
 
@@ -254,14 +255,17 @@ public class TreeBinary <E>{
 			return ;
 		}
 
-		if(hasLeft(no))
+		if(hasLeft(no)){
+			System.out.print("(");
 			inOrder(no.getLeft());
+		}
 
-		System.out.println(no.getElement());
+		System.out.print(no.getElement());
 
-		if(hasRight(no))
+		if(hasRight(no)){
 			inOrder(no.getRight());
-
+			System.out.print(")");
+		}
 	}
 
 	public void inOrder(TreeBinary<E> subTree){
@@ -333,6 +337,35 @@ public class TreeBinary <E>{
 	}
 
 
+	private double calculaExpressao(BTNode node){
+		double x=0, y = 0;
+		if(!isExternal(node)){
+			x = calculaExpressao(node.getLeft());
+			y = calculaExpressao(node.getRight());
+
+			switch(((String)node.getElement()).charAt(0)){
+			case '+':
+				x = x+y;
+				break;
+			case '-':
+				x = x-y;
+				break;
+			case '*':
+				x = x*y;
+				break;
+			case '/':
+				x = x/y;
+				break;
+			}
+			return x;
+		}else{
+			return Double.parseDouble(((String) node.getElement()));
+		}
+	}
+
+	public double calculaExpressao(TreeBinary<E> node){
+		return calculaExpressao(node.getRoot());
+	}
 }
 
 

@@ -1,4 +1,4 @@
-package TreeBinary;
+package AVL;
 
 public class BTNode {
 	private Object element;

@@ -21,7 +21,7 @@ function Tree(){
 	}
 
 	this.numAleatorio =  function(){
-		var num = Math.floor(Math.random() * 50);
+		var num = Math.floor(Math.random() * 1000);
 			console.log(num);
 		return num;
 	}
@@ -179,74 +179,126 @@ function Tree(){
 				}
 				return height+1;
 			}	
-		}  
-	}
+		} 
 
-	/*
-
-			
-
-	}
-
-	private int height(BTNode no){
-		if(no.equals(null))
-			return 0;
-		else if(isExternal(no)){
-			return 1;
-		}else{
-			int tam = 0, height=0;
-
-			if(hasLeft(no)){
-				tam = height(no.getLeft());
-				if(height<tam){
-					height = tam;
-				}
-			}
-			if(hasRight(no)){
-				tam = height(no.getRight());
-				if(height<tam){
-					height = tam;
-				}
-			}
-			return height+1;
-		}	
-	}
-
-	public int height(TreeBinary<E> subtree){
-		return height(subtree.getRoot())-1;
+		return recheight(tree.root); 
 	}
 
 
-	private int size(BTNode no){
-		int total = 1;
+	this.size = function(tree){
+		
+		function recSize(no){
 
-		if(no.equals(null)){
-			return 0;
+			var total = 1;
+
+			if(no)
+				return 0;
+			if(no.left)
+				total += size(no.left);
+
+			if(no.right)
+				total += size(no.right);
+
+			return total;
 		}
 
-		if(hasLeft(no))
-			total += size(no.getLeft());
-
-		if(hasRight(no))
-			total += size(no.getRight());
-
-		return total;
+		return recSize(tree.root);
 	}
 
-	public int getSize(TreeBinary<E> subTree) {
-		return size(subTree.getRoot());
+    this.find = function(){
+            return this.find[arguments[0].constructor].apply(this, arguments);
+        }     
+    //this.find[null] = function(){ return this.root}
+
+    this.find[Number] = function(key, node){
+		if(node == null || node.key == key)
+			return node;
+		if(node.key < key)
+			return this.find(key, node.left);
+		else 
+			return this.find(key, node.right);
+
+ 	}
+
+    this.find[Node] = function(no, root){
+    	return this.find(no.key, root);
 	}
 
-	private BTNode find(BTNode no, BTNode root){
-		BTNode node = null; 
-		if(root.equals(no))
-			return no;
-		if(hasLeft(root))
-			node = find(no, root.getLeft());
-		if(hasRight(root) && (node == null))
-			node =  find(no, root.getRight());
-		return node;
+
+
+
+this.removeRec = function(node){
+			var no = null;
+			var parent = node.parent;
+
+			if(node.left && node.right){
+				var key = this.searchNext(node.left);
+				console.log("tem dois filhos");
+
+				no = this.find(key, node);
+				
+				
+				no = this.removeRec(no);
+				
+				no.left = node.left;
+				no.right = node.right;
+				no.parent = parent;
+			}else if(node.left){
+				no = node.left;
+				console.log("tem um filho da esquerda");
+				no.parent = parent;
+			}else if(node.right){
+				no = node.right;
+				console.log("tem um filho da direita");
+				no.parent = parent;
+			}
+			
+			if(parent == null){
+				this.root = no;
+			}else{
+				if(parent.left == node){
+					parent.left = no;
+				}else{
+					parent.right = no;
+				}
+			}
+
+			node.parent = null;
+			node.left = null;
+			node.right = null;
+
+			return node;
+			}
+
+	this.searchNext = function (node){
+			var min = node.key, num1 = null, num2 = null;
+
+			if (node.isExternal())
+				return min;	
+			if(node.left)
+				num1 = searchNext(node.left); 
+			if(node.right)
+				num2 = searchNext(node.right); 
+			
+
+			if(left==null)
+				return Math.min(min, right);
+			if(right == null)
+				return Math.min(min, left);
+
+			return Math.min(Math.min(left, right), min);
+		}
+
+
+
+	this.remove = function(subTree){
+		this.removeRec(subTree.root);
 	}
+
+
+
+
+	/*
 
 	private BTNode find(E e, BTNode no){
 		BTNode node = null; 
@@ -278,24 +330,6 @@ function Tree(){
 		}
 		return ok;
 	}
-
-	public boolean remove(TreeBinary<E> subTree){
-		boolean ok = false;
-		BTNode node = find(subTree.getRoot(), this.root);
-		if(node != null){
-			if(!(hasLeft(node) && hasRight(node))){
-				if(hasLeft(node)){
-					node.getParent().setLeft(node.getLeft());	
-
-				}else
-					node.getParent().setRight(node.getRight());
-				node= null;
-				ok = true;
-			}
-		}
-		return ok;
-	}
-
 	public void replace(E e, TreeBinary<E> subTree){
 		BTNode no = find(subTree.getRoot(), getRoot());
 		if(!(no ==null)){
@@ -312,22 +346,26 @@ function main(){
 	root.setElement("Root");
 	var arrNode = new Array();
 
-	for (var i = 1; i<=10;i++){
+	for (var i = 1; i<=30;i++){
 		arrNode[i] = new Tree();
 		arrNode[i].setElement("node "+i);
 		root.add(arrNode[i]);
 	}
-		console.log("preOrder");
+		/*console.log("preOrder");
 		root.preOrder(root);
 		console.log("\n posOrder");
 		root.posOrder(root);
 		console.log("\ninOrder");
 		root.inOrder(root);
+*/
 
+		console.log("preOrder");
+		root.preOrder(root);
+		console.log("\n\nelement = "+arrNode[1].root.element+" key = "+arrNode[1].root.key);
+		console.log(root.remove(arrNode[1]));
+		console.log("\n\n\npreOrder");
+		root.preOrder(root);
 
-		var no = new Node("node1");
-		if(no.isExternal)
-			console.log("Teste ok");
 }
 
 main();

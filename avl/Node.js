@@ -6,8 +6,9 @@ function Node(element, parent, left, right, key) {
 	this.left = left; 
 	this.right=right;
 	this.key = key;
+	this.fat = 0;
 	this.isExternal = function(){
-		if(left || right)
+		if(this.left || this.right)
 			return false;
 		return true;
 	}
@@ -100,13 +101,22 @@ function Tree(){
 			ant.left = novoNo;
 		}
 		
-		//this.balanceTree();
+		this.atualizaFat(this.root);
+		
+		var tree = {
+			root : this.root
+		};
+
+		console.log("\npreOrder e Fat root = "+this.root.fat);
+		this.preOrder(tree);
+		this.balanceTree(this.root);
+
 	}
 
 	this.preOrder = function(tree){
 		function recOrder(node){
 			if(node.parent)
-				console.log(node.element+" key: "+node.key+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
+				console.log(node.element+" key: "+node.key+" Fat: "+node.fat+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
 			if(node.right !=null)
 				recOrder(node.right);
 			if(node.left !=null)
@@ -124,7 +134,7 @@ function Tree(){
 			if(node.left !=null)
 				recOrder(node.left);
 			if(node.parent)
-				console.log(node.element+" key: "+node.key+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
+				console.log(node.element+" key: "+node.key+" Fat: "+node.fat+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
 		}
 		recOrder(tree.root);
 	}
@@ -156,32 +166,21 @@ function Tree(){
 		return i;
 	}
 
-	this.height = function(tree){
-		function recheight(no){
-			if(no)
+	this.height = function(no){
+			
+			 if(no.isExternal()){
 				return 0;
-			else if(isExternal(no)){
-				return 1;
 			}else{
-				var tam = 0, height=0;
+				var height=0;
 
-				if(hasLeft(no)){
-					tam = height(no.getLeft());
-					if(height<tam){
-						height = tam;
-					}
+				if(no.left){
+					height = Math.max(height, this.height(no.left));
 				}
-				if(hasRight(no)){
-					tam = height(no.getRight());
-					if(height<tam){
-						height = tam;
-					}
+				if(no.right){
+					height = Math.max(height, this.height(no.right));
 				}
 				return height+1;
-			}	
-		} 
-
-		return recheight(tree.root); 
+			}	 
 	}
 
 
@@ -296,7 +295,97 @@ this.removeRec = function(node){
 	}
 
 
+	this.rotationRight = function (z){
+			//if(z.right.fat < 0 )
+			//	this.rotationLeft(z.right);
+			
+			var y = z.right;
+			
+			z.right = y.left;
+			if(y.left)
+				y.left.parent = z;
 
+			y.left = z;
+
+			if(z.parent){
+				if(z.parent.right == z)
+					z.parent.right = y;
+				else
+					z.parent.left = y;
+				y.parent = z.parent;
+
+			}else{
+				this.root = y;
+				y.parent = null;
+			}
+
+
+
+			//z.parent = y;
+
+		this.atualizaFat(this.root);
+
+		}
+
+	this.rotationLeft = function(z){
+		//if(z.left.fat > 0 )
+		//	this.rotationRight(z.left);
+			
+			var y = z.left;
+			
+			z.left = y.right;
+			if(y.right)
+				y.right.parent = z;
+
+			y.right = z;
+			if(z.parent){
+				if(z.parent.right == z)
+					z.parent.right = y;
+				else
+					z.parent.left = y;
+				y.parent = z.parent;
+
+			}else{
+				this.root = y;
+				y.parent = null;
+			}
+
+
+		this.atualizaFat(this.root);
+
+	}
+
+	this.atualizaFat = function (node){
+
+			var alt1 =0, alt2 = 0;
+			if(node.right)
+				alt1 = this.atualizaFat(node.right);
+			if(node.left)
+				alt2 = this.atualizaFat(node.left);
+
+			node.fat = alt1 - alt2;
+
+			if(node.parent){
+				return this.height(node);
+			}
+		}
+
+
+
+	this.balanceTree = function(node){
+		
+		if(node.right)
+			this.balanceTree(node.right);
+		if(node.left)
+			this.balanceTree(node.left);
+
+		if(node.fat<-1 || node.fat > 1){
+				if(node.fat>0)
+					this.rotationRight(node);
+				else
+					this.rotationLeft(node);
+			}
+	}
 
 	/*
 
@@ -346,7 +435,7 @@ function main(){
 	root.setElement("Root");
 	var arrNode = new Array();
 
-	for (var i = 1; i<=30;i++){
+	for (var i = 1; i<=4;i++){
 		arrNode[i] = new Tree();
 		arrNode[i].setElement("node "+i);
 		root.add(arrNode[i]);
@@ -362,10 +451,19 @@ function main(){
 		console.log("preOrder");
 		root.preOrder(root);
 		console.log("\n\nelement = "+arrNode[1].root.element+" key = "+arrNode[1].root.key);
-		console.log(root.remove(arrNode[1]));
-		console.log("\n\n\npreOrder");
-		root.preOrder(root);
+		//console.log(root.remove(arrNode[1]));
+		//console.log("\n\n\npreOrder");
+		//root.preOrder(root);
 
+
+		console.log("Altura do root = "+ root.height(root.root)+" Fat do root = "+ root.root.fat);
+		//root.balanceTree(root.root);
+		//root.atualizaFat(root.root);
+
+		console.log("\n\npreOrder");
+		root.preOrder(root);
+		console.log("Altura do root = "+ root.height(root.root)+" Fat do root = "+ root.root.fat+" Novo root "+ root.root.element);
+		
 }
 
 main();

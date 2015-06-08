@@ -67,7 +67,7 @@ function Tree(){
 	}*/
 
 	this.getElement = function(){
-		return root.element;
+		return this.root.element;
 	}
 
 	this.getLeft = function(){
@@ -83,6 +83,10 @@ function Tree(){
 	}	
 
 	this.add = function(tree){
+		//console.log("\n Antes de add->"+tree.root.element+"\npreOrder e Fat root = "+this.root.fat);
+		//this.preOrder(tree);
+
+
 		var novoNo = tree.root;
 		var node = this.root;
 		var ant = this.root;
@@ -101,15 +105,18 @@ function Tree(){
 			ant.left = novoNo;
 		}
 		
-		this.atualizaFat(this.root);
+		//this.atualizaFat(this.root);
 		
-		var tree = {
-			root : this.root
-		};
+		// var tree = {
+		// 	root : this.root
+		// };
 
-		console.log("\npreOrder e Fat root = "+this.root.fat);
-		this.preOrder(tree);
+		
 		this.balanceTree(this.root);
+
+		//console.log("\n Apos de add->"+tree.root.element+"\npreOrder e Fat root = "+this.root.fat);
+		//this.preOrder(tree);
+//	this.verificarBalanceamento(this.root);
 
 	}
 
@@ -168,7 +175,7 @@ function Tree(){
 
 	this.height = function(no){
 			
-			 if(no.isExternal()){
+			 if(!no || no.isExternal()){
 				return 0;
 			}else{
 				var height=0;
@@ -266,6 +273,9 @@ this.removeRec = function(node){
 			node.left = null;
 			node.right = null;
 
+
+			//this.atualizaFat(this.root);		
+			this.balanceTree(this.root);
 			return node;
 			}
 
@@ -295,59 +305,88 @@ this.removeRec = function(node){
 	}
 
 
+
+
+	this.rotationLeftRight = function(z){
+		var aux = z.left;
+		z.left = aux.right;
+		aux.right = z.left.left;
+		z.left.left = aux;
+		z.left.parent = aux.parent;
+		aux.parent = z.left;
+		if(aux.right)
+			aux.right.parent = aux;
+	}
+
+	this.rotationRightLeft = function(z){
+		var aux = z.right;
+		z.right = aux.left;
+		aux.left = z.right.right;
+		z.right.right = aux;
+		z.right.parent = aux.parent;
+		aux.parent = z.right;
+		if(aux.left)
+			aux.left.parent = aux;
+	}
+
 	this.rotationRight = function (z){
-			//if(z.right.fat < 0 )
-			//	this.rotationLeft(z.right);
 			
-			var y = z.right;
+			var aux = z;
+			z = z.right; 
+
+			//var y = z.right;
 			
-			z.right = y.left;
-			if(y.left)
-				y.left.parent = z;
+			aux.right = z.left;
 
-			y.left = z;
+			if(aux.right)
+				aux.right.parent = z;
+			
 
-			if(z.parent){
-				if(z.parent.right == z)
-					z.parent.right = y;
+			z.left = aux;
+
+			if(aux.parent){
+				if(aux.parent.right == aux)
+					aux.parent.right = z;
 				else
-					z.parent.left = y;
-				y.parent = z.parent;
-
+					aux.parent.left = z;
+				z.parent = aux.parent;
+				aux.parent = z;
 			}else{
-				this.root = y;
-				y.parent = null;
+				z.parent = null;
+				this.root = z;
+				aux.parent = z;
+				
 			}
-
-
-
-			//z.parent = y;
 
 		this.atualizaFat(this.root);
 
 		}
 
 	this.rotationLeft = function(z){
-		//if(z.left.fat > 0 )
-		//	this.rotationRight(z.left);
 			
-			var y = z.left;
-			
-			z.left = y.right;
-			if(y.right)
-				y.right.parent = z;
+			//console.log("rotationLeft  z = "+ z.element);
+			var aux = z;
+			var z = z.left;
+			//console.log("aux = "+aux.element+" z ="+z.element);
 
-			y.right = z;
-			if(z.parent){
-				if(z.parent.right == z)
-					z.parent.right = y;
+			aux.left = z.right;
+			
+			//z.left = y.right;
+			if(aux.left)
+				aux.left.parent = aux;
+
+			z.right = aux;
+			if(aux.parent){
+				if(aux.parent.right == aux)
+					aux.parent.right = z;
 				else
-					z.parent.left = y;
-				y.parent = z.parent;
-
+					aux.parent.left = z;
+				z.parent = aux.parent;
+				aux.parent = z;
 			}else{
-				this.root = y;
-				y.parent = null;
+				z.parent = null;
+				this.root = z;
+				aux.parent = z;	
 			}
 
 
@@ -366,7 +405,7 @@ this.removeRec = function(node){
 			node.fat = alt1 - alt2;
 
 			if(node.parent){
-				return this.height(node);
+				return this.height(node) +1;
 			}
 		}
 
@@ -374,58 +413,27 @@ this.removeRec = function(node){
 
 	this.balanceTree = function(node){
 		
+		this.atualizaFat(this.root);
+
 		if(node.right)
 			this.balanceTree(node.right);
 		if(node.left)
 			this.balanceTree(node.left);
 
 		if(node.fat<-1 || node.fat > 1){
-				if(node.fat>0)
+				if(node.fat>0){
+					if(node.right.fat < 0)
+						this.rotationRightLeft(node);
 					this.rotationRight(node);
-				else
+				}
+				else{
+					if(node.left.fat > 0)
+						this.rotationLeftRight(node);
 					this.rotationLeft(node);
+				}
 			}
 	}
 
-	/*
-
-	private BTNode find(E e, BTNode no){
-		BTNode node = null; 
-		if(no.getElement().equals(e))
-			return no;
-		if(hasLeft(no))
-			node =  find(e, no.getLeft());
-		if(hasRight(no) && (node == null))
-			node =  find(e, no.getRight());
-		return node;
-	}
-
-	public TreeBinary<E> find(E e){
-		BTNode node = find(e, getRoot());
-		if(!(node == null)){
-			TreeBinary<E> t = new TreeBinary<E>();
-			t.setRoot(node);
-			return t;
-		}
-		return null;
-	}
-
-	public boolean remove(E e){
-		boolean ok = false;
-		BTNode node = find(e, this.root);
-		if(node != null){
-			node.setElement(null);
-			ok = true;
-		}
-		return ok;
-	}
-	public void replace(E e, TreeBinary<E> subTree){
-		BTNode no = find(subTree.getRoot(), getRoot());
-		if(!(no ==null)){
-			no.setElement(e);
-		}
-	}
-*/
 	this.root = new Node(null, null, null, null, this.numAleatorio());
 }
 
@@ -434,10 +442,12 @@ function main(){
 	var root  = new Tree();
 	root.setElement("Root");
 	var arrNode = new Array();
+	//root.root.key = 0;
 
-	for (var i = 1; i<=4;i++){
+	for (var i = 1; i<=20;i++){
 		arrNode[i] = new Tree();
 		arrNode[i].setElement("node "+i);
+		//arrNode[i].root.key = i*20+1;
 		root.add(arrNode[i]);
 	}
 		/*console.log("preOrder");
@@ -448,15 +458,15 @@ function main(){
 		root.inOrder(root);
 */
 
-		console.log("preOrder");
-		root.preOrder(root);
-		console.log("\n\nelement = "+arrNode[1].root.element+" key = "+arrNode[1].root.key);
+		//console.log("preOrder");
+		//root.preOrder(root);
+		//console.log("\n\nelement = "+arrNode[1].root.element+" key = "+arrNode[1].root.key);
 		//console.log(root.remove(arrNode[1]));
 		//console.log("\n\n\npreOrder");
 		//root.preOrder(root);
 
 
-		console.log("Altura do root = "+ root.height(root.root)+" Fat do root = "+ root.root.fat);
+		console.log("\n\nNode root = "+root.getElement()+ " Key = "+root.root.key+" Fat do Node root = "+ root.root.fat);
 		//root.balanceTree(root.root);
 		//root.atualizaFat(root.root);
 

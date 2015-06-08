@@ -2,12 +2,20 @@
 <html>
 	<head>
 		<title>Node</title>
-		<!--<script src="Node.js"></script>-->
+		<meta charset="utf-8">
+		<style>
+			canvas{
+				border: 1px solid black;
+			}
+		</style>
+		<script src="Node.js"></script>
 	</head>
 	<body>
-		<script> 
-			var valor1 = Math.min ( 3,undefined); 
-			alert (valor1); 
-		</script>
+		<form>
+			<label for="add">Inserir: </label><input id="add" type="text"> 
+			<label for="remove">Remover: </label><input id="remove" type="text">
+		</form>
+		<br>
+		<canvas id="tree" width="1200" height="2000"></canvas>
 	</body>
 </html>

@@ -1,4 +1,4 @@
-//window.onload = main;
+window.onload = main;
 
 function Node(element, parent, left, right, key) {
 	this.element = element;
@@ -437,6 +437,41 @@ this.removeRec = function(node){
 	this.root = new Node(null, null, null, null, this.numAleatorio());
 }
 
+function desenharcirculosletra(text, altura, largura,dir) {
+     var canvas = document.getElementById('tree');
+     var context = canvas.getContext('2d');
+     
+     if(altura>0 && largura == 0)
+     	if(dir=="d")
+     		largura = 0.5;
+     	else
+     		largura = -0.5;
+     var x = 600 + largura*60;
+     var y = 61 +60*altura;
+
+     context.fillStyle = "#0099FF";
+     context.beginPath();
+     context.arc(x, y, 30, 0, Math.PI*2, false);//Coordenadas X, Coordenadas Y, Raio, Inicio do ângulo, Fim do ângulo , No sentido do relógio / Contra o sentido do relógio
+     context.closePath();
+     context.fill();//preenche o circulo
+     // Adicionar texto
+     context.fillStyle = '#FFFFFF';
+     context.font = '17px Trebuchet MS';
+     context.fillText(text, x-13, y+6); 
+ 
+}
+
+
+function desenhaTree(node, altura, largura, dir){
+
+		desenharcirculosletra(node.key, altura, largura, dir);
+			if(node.right !=null){
+				desenhaTree(node.right, altura+1, largura-2, "d");
+			}
+			if(node.left !=null)
+				desenhaTree(node.left, altura+1, largura+2, "e");
+		}
+
 function main(){
 
 	var root  = new Tree();
@@ -444,7 +479,7 @@ function main(){
 	var arrNode = new Array();
 	//root.root.key = 0;
 
-	for (var i = 1; i<=20;i++){
+	for (var i = 1; i<=5;i++){
 		arrNode[i] = new Tree();
 		arrNode[i].setElement("node "+i);
 		//arrNode[i].root.key = i*20+1;
@@ -472,8 +507,8 @@ function main(){
 
 		console.log("\n\npreOrder");
 		root.preOrder(root);
-		console.log("Altura do root = "+ root.height(root.root)+" Fat do root = "+ root.root.fat+" Novo root "+ root.root.element);
-		
+		//console.log("Altura do root = "+ root.height(root.root)+" Fat do root = "+ root.root.fat+" Novo root "+ root.root.element);
+		desenhaTree(root.root, 0, 0);
 }
 
-main();
+//main();

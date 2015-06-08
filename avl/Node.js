@@ -123,7 +123,7 @@ function Tree(){
 	this.preOrder = function(tree){
 		function recOrder(node){
 			if(node.parent)
-				console.log(node.element+" key: "+node.key+" Fat: "+node.fat+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
+				console.log(node.element+" key: "+node.key+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
 			if(node.right !=null)
 				recOrder(node.right);
 			if(node.left !=null)
@@ -141,7 +141,7 @@ function Tree(){
 			if(node.left !=null)
 				recOrder(node.left);
 			if(node.parent)
-				console.log(node.element+" key: "+node.key+" Fat: "+node.fat+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
+				console.log(node.element+" key: "+node.key+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
 		}
 		recOrder(tree.root);
 	}
@@ -443,9 +443,9 @@ function desenharcirculosletra(text, altura, largura,dir) {
      
      if(altura>0 && largura == 0)
      	if(dir=="d")
-     		largura = 0.5;
+     		largura = 0.6;
      	else
-     		largura = -0.5;
+     		largura = -0.6;
      var x = 600 + largura*60;
      var y = 61 +60*altura;
 
@@ -479,7 +479,7 @@ function main(){
 	var arrNode = new Array();
 	//root.root.key = 0;
 
-	for (var i = 1; i<=5;i++){
+	for (var i = 1; i<=6;i++){
 		arrNode[i] = new Tree();
 		arrNode[i].setElement("node "+i);
 		//arrNode[i].root.key = i*20+1;
@@ -501,7 +501,7 @@ function main(){
 		//root.preOrder(root);
 
 
-		console.log("\n\nNode root = "+root.getElement()+ " Key = "+root.root.key+" Fat do Node root = "+ root.root.fat);
+		console.log("\n\nNode root = "+root.getElement()+ " Key = "+root.root.key);
 		//root.balanceTree(root.root);
 		//root.atualizaFat(root.root);
 

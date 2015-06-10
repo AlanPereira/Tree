@@ -1,5 +1,7 @@
 window.onload = main;
 
+var arvore;
+
 function Node(element, parent, left, right, key) {
 	this.element = element;
 	this.parent = parent;
@@ -61,10 +63,6 @@ function Tree(){
 			ok = true;
 		return ok;
 	}
-	/*
-	this.isEmpty = function(){
-		return if(this.root);
-	}*/
 
 	this.getElement = function(){
 		return this.root.element;
@@ -83,9 +81,6 @@ function Tree(){
 	}	
 
 	this.add = function(tree){
-		//console.log("\n Antes de add->"+tree.root.element+"\npreOrder e Fat root = "+this.root.fat);
-		//this.preOrder(tree);
-
 
 		var novoNo = tree.root;
 		var node = this.root;
@@ -104,26 +99,16 @@ function Tree(){
 		else{
 			ant.left = novoNo;
 		}
-		
-		//this.atualizaFat(this.root);
-		
-		// var tree = {
-		// 	root : this.root
-		// };
 
 		
 		this.balanceTree(this.root);
-
-		//console.log("\n Apos de add->"+tree.root.element+"\npreOrder e Fat root = "+this.root.fat);
-		//this.preOrder(tree);
-//	this.verificarBalanceamento(this.root);
 
 	}
 
 	this.preOrder = function(tree){
 		function recOrder(node){
 			if(node.parent)
-				console.log(node.element+" key: "+node.key+" Fat: "+node.fat+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
+				console.log(node.element+" key: "+node.key+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
 			if(node.right !=null)
 				recOrder(node.right);
 			if(node.left !=null)
@@ -141,7 +126,7 @@ function Tree(){
 			if(node.left !=null)
 				recOrder(node.left);
 			if(node.parent)
-				console.log(node.element+" key: "+node.key+" Fat: "+node.fat+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
+				console.log(node.element+" key: "+node.key+" Seu Pai é : "+node.parent.element+" key "+node.parent.key);
 		}
 		recOrder(tree.root);
 	}
@@ -214,12 +199,11 @@ function Tree(){
     this.find = function(){
             return this.find[arguments[0].constructor].apply(this, arguments);
         }     
-    //this.find[null] = function(){ return this.root}
 
     this.find[Number] = function(key, node){
 		if(node == null || node.key == key)
 			return node;
-		if(node.key < key)
+		if(node.key < key)	
 			return this.find(key, node.left);
 		else 
 			return this.find(key, node.right);
@@ -249,6 +233,13 @@ this.removeRec = function(node){
 				no.left = node.left;
 				no.right = node.right;
 				no.parent = parent;
+
+				if(no.left)
+					no.left.parent = no;
+				if(no.right)
+					no.right.parent = no;
+
+
 			}else if(node.left){
 				no = node.left;
 				console.log("tem um filho da esquerda");
@@ -272,10 +263,8 @@ this.removeRec = function(node){
 			node.parent = null;
 			node.left = null;
 			node.right = null;
-
-
-			//this.atualizaFat(this.root);		
-			this.balanceTree(this.root);
+	
+			
 			return node;
 			}
 
@@ -285,17 +274,17 @@ this.removeRec = function(node){
 			if (node.isExternal())
 				return min;	
 			if(node.left)
-				num1 = searchNext(node.left); 
+				num1 = this.searchNext(node.left); 
 			if(node.right)
-				num2 = searchNext(node.right); 
+				num2 = this.searchNext(node.right); 
 			
 
-			if(left==null)
-				return Math.min(min, right);
-			if(right == null)
-				return Math.min(min, left);
+			if(num1==null)
+				return Math.min(min, num2);
+			if(num2 == null)
+				return Math.min(min, num1);
 
-			return Math.min(Math.min(left, right), min);
+			return Math.min(Math.min(num1, num2), min);
 		}
 
 
@@ -333,8 +322,6 @@ this.removeRec = function(node){
 			
 			var aux = z;
 			z = z.right; 
-
-			//var y = z.right;
 			
 			aux.right = z.left;
 
@@ -364,14 +351,11 @@ this.removeRec = function(node){
 
 	this.rotationLeft = function(z){
 			
-			//console.log("rotationLeft  z = "+ z.element);
 			var aux = z;
 			var z = z.left;
-			//console.log("aux = "+aux.element+" z ="+z.element);
 
 			aux.left = z.right;
 			
-			//z.left = y.right;
 			if(aux.left)
 				aux.left.parent = aux;
 
@@ -474,8 +458,18 @@ function desenhaTree(node, altura, largura, dir){
 
 function main(){
 
-	var root  = new Tree();
-	root.setElement("Root");
+	
+	var add = document.getElementById('add');
+	add.onclick = addElement;
+	var remove = document.getElementById('remove');
+	remove.onclick = removeElement;
+
+
+/*
+	arvore = new Tree();
+	arvore.setElement("Root");
+	
+	
 	var arrNode = new Array();
 	//root.root.key = 0;
 
@@ -483,32 +477,96 @@ function main(){
 		arrNode[i] = new Tree();
 		arrNode[i].setElement("node "+i);
 		//arrNode[i].root.key = i*20+1;
-		root.add(arrNode[i]);
+		arvore.add(arrNode[i]);
 	}
 		/*console.log("preOrder");
-		root.preOrder(root);
+		root.preOrder(arvore);
 		console.log("\n posOrder");
-		root.posOrder(root);
+		root.posOrder(arvore);
 		console.log("\ninOrder");
-		root.inOrder(root);
-*/
+		root.inOrder(arvore);
+
 
 		//console.log("preOrder");
-		//root.preOrder(root);
+		//root.preOrder(arvore);
 		//console.log("\n\nelement = "+arrNode[1].root.element+" key = "+arrNode[1].root.key);
-		//console.log(root.remove(arrNode[1]));
+		//console.log(arvore.remove(arrNode[1]));
 		//console.log("\n\n\npreOrder");
-		//root.preOrder(root);
+		//root.preOrder(arvore);
 
 
-		console.log("\n\nNode root = "+root.getElement()+ " Key = "+root.root.key+" Fat do Node root = "+ root.root.fat);
-		//root.balanceTree(root.root);
-		//root.atualizaFat(root.root);
+		console.log("\n\nNode root = "+arvore.getElement()+ " Key = "+arvore.root.key);
+		//root.balanceTree(arvore.root);
+		//root.atualizaFat(arvore.root);
 
 		console.log("\n\npreOrder");
-		root.preOrder(root);
-		//console.log("Altura do root = "+ root.height(root.root)+" Fat do root = "+ root.root.fat+" Novo root "+ root.root.element);
-		desenhaTree(root.root, 0, 0);
+		arvore.preOrder(arvore);
+		//console.log("Altura do root = "+ arvore.height(arvore.root)+" Novo root "+ arvore.root.element);
+		desenhaTree(arvore.root, 0, 0);
+	*/
 }
+
+
+
+function addElement(){
+	var key = document.getElementById('addKey').value;
+	document.getElementById('addKey').value = '';
+
+	if(key!=''){
+	var script = document.createElement('canvas');
+	script.setAttribute('id', 'tree');
+	script.setAttribute('width', '1200');
+	script.setAttribute('height', '2000');
+
+	var antScript = document.getElementById('tree');
+
+
+	var parent = document.getElementById('canvas');
+	parent.replaceChild(script, antScript);
+
+	var node = new Tree();
+	node.setElement('node de key: '+ key);
+	node.root.key = parseFloat(key);
+
+	if(arvore)
+		arvore.add(node);
+	else
+		arvore = node;
+	desenhaTree(arvore.root, 0, 0);
+}else
+	alert('digite um número inteiro');
+}
+
+function removeElement(){
+	var key = document.getElementById('removeKey').value;
+	document.getElementById('removeKey').value = '';
+
+	if(key!=''){
+	var script = document.createElement('canvas');
+	script.setAttribute('id', 'tree');
+	script.setAttribute('width', '1200');
+	script.setAttribute('height', '2000');
+
+	var antScript = document.getElementById('tree');
+
+
+	var parent = document.getElementById('canvas');
+	parent.replaceChild(script, antScript);
+
+	key = parseFloat(key);
+	if(arvore)
+		var node = arvore.find(key, arvore.root);
+		if(node){
+			arvore.removeRec(node);
+			arvore.balanceTree(arvore.root);
+		}
+		else
+			alert('não encontrado');
+	desenhaTree(arvore.root, 0, 0);
+}else
+	alert('digite um número inteiro');
+}
+
+
 
 //main();

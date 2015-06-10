@@ -1,4 +1,4 @@
-window.onload = main;
+//window.onload = main;
 
 var arvore;
 
@@ -458,16 +458,16 @@ function desenhaTree(node, altura, largura, dir){
 
 function main(){
 
-	
+/*	
 	var add = document.getElementById('add');
 	add.onclick = addElement;
 	var remove = document.getElementById('remove');
 	remove.onclick = removeElement;
 
 
-/*
+*/
 	arvore = new Tree();
-	arvore.setElement("Root");
+	arvore.setElement("Node 0");
 	
 	
 	var arrNode = new Array();
@@ -495,15 +495,17 @@ function main(){
 		//root.preOrder(arvore);
 
 
-		console.log("\n\nNode root = "+arvore.getElement()+ " Key = "+arvore.root.key);
+		
 		//root.balanceTree(arvore.root);
 		//root.atualizaFat(arvore.root);
-
+	*/
+		console.log("\n\nNode root = "+arvore.getElement()+ " Key = "+arvore.root.key);	
 		console.log("\n\npreOrder");
 		arvore.preOrder(arvore);
 		//console.log("Altura do root = "+ arvore.height(arvore.root)+" Novo root "+ arvore.root.element);
-		desenhaTree(arvore.root, 0, 0);
-	*/
+		
+		//desenhaTree(arvore.root, 0, 0);
+	
 }
 
 
@@ -569,4 +571,4 @@ function removeElement(){
 
 
 
-//main();
+main();

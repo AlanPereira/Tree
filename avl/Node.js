@@ -421,22 +421,48 @@ this.removeRec = function(node){
 	this.root = new Node(null, null, null, null, this.numAleatorio());
 }
 
-function desenharcirculosletra(text, altura, largura,dir) {
+function desenharcirculosletra(text, altura, largura, fatAnt) {
      var canvas = document.getElementById('tree');
      var context = canvas.getContext('2d');
-     
+
      var x = largura;
      var y = 61 +60*altura;
 
-     context.fillStyle = "#0099FF";
+     context.fillStyle = "black";
      context.beginPath();
      context.arc(x, y, 30, 0, Math.PI*2, false);//Coordenadas X, Coordenadas Y, Raio, Inicio do ângulo, Fim do ângulo , No sentido do relógio / Contra o sentido do relógio
      context.closePath();
      context.fill();//preenche o circulo
      // Adicionar texto
-     context.fillStyle = '#FFFFFF';
+     context.fillStyle = 'white';
      context.font = '17px Trebuchet MS';
-     context.fillText(text, x-13, y+6); 
+     context.fillText(text, x-13, y+6);
+
+
+	 var xAnt = fatAnt;
+     var yAnt = 61 +60*(altura-1);
+     
+
+     if(fatAnt>largura){
+     	xAnt -= 30;
+     	x +=30;
+     	//y = y - 7*(altura-1);
+     }else if(fatAnt<largura){
+     	xAnt += 30 ;
+     	x -=30  + (altura-1);
+     	y = y - altura;
+     }else{
+     	xAnt = x;
+     	yAnt = y;
+     }
+
+     context.beginPath();
+     context.moveTo(xAnt, yAnt);
+     context.lineTo(x, y);
+     context.lineWidth = 3;
+     context.stroke();
+     context.strokeStyle = "red";
+     context.fill();
  
 }
 
@@ -444,7 +470,7 @@ function desenharcirculosletra(text, altura, largura,dir) {
 function desenhaTree(node, altura, fatAnt, dir){
 
 		var fat = 1200/Math.pow(2, altura+1);
-		var d =0, e = 0;
+		//var d =0, e = 0;
 		switch(dir){
      	case "d":
      		fat = largura = fatAnt-fat;
@@ -454,11 +480,11 @@ function desenhaTree(node, altura, fatAnt, dir){
      		
      		break;
      	case "r":
-     		largura = fat;	
+     		fatAnt = largura = fat;	
      		break;
      }
 
-     desenharcirculosletra(node.key, altura, largura, dir);
+     desenharcirculosletra(node.key, altura, largura, fatAnt);
 
      
      console.log("Node = "+node.key+"Fat = "+fat+" altura = "+altura+" fatAnt = "+fatAnt+" direção = "+dir);
@@ -478,8 +504,8 @@ function main(){
 	var remove = document.getElementById('remove');
 	remove.onclick = removeElement;
 
+	/*
 
-/**//*
 	arvore = new Tree();
 	arvore.setElement("Node 0");
 	
@@ -487,13 +513,13 @@ function main(){
 	var arrNode = new Array();
 	//root.root.key = 0;
 
-	for (var i = 1; i<=5;i++){
+	for (var i = 1; i<=40;i++){
 		arrNode[i] = new Tree();
 		arrNode[i].setElement("node "+i);
 		//arrNode[i].root.key = i*20+1;
 		arvore.add(arrNode[i]);
 	}
-		/*console.log("preOrder");
+		console.log("preOrder");
 		root.preOrder(arvore);
 		console.log("\n posOrder");
 		root.posOrder(arvore);
@@ -518,7 +544,11 @@ function main(){
 		arvore.preOrder(arvore);
 		//console.log("Altura do root = "+ arvore.height(arvore.root)+" Novo root "+ arvore.root.element);
 		
-		//desenhaTree(arvore.root, 0, 0);
+
+	
+
+		desenhaTree(arvore.root, 0, 0, 'r');
+
 	*/
 }
 

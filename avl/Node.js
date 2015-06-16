@@ -448,9 +448,9 @@ function desenharcirculosletra(text, altura, largura, fatAnt) {
      	x +=30;
      	//y = y - 7*(altura-1);
      }else if(fatAnt<largura){
-     	xAnt += 30 ;
-     	x -=30  + (altura-1);
-     	y = y - altura;
+     	xAnt += 30;
+     	x -=30;
+     	//y = y - altura;
      }else{
      	xAnt = x;
      	yAnt = y;

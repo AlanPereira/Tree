@@ -1,5 +1,7 @@
 window.onload = main;
 
+var arvore;
+
 function Node(element, parent, left, right, key) {
 	this.element = element;
 	this.parent = parent;
@@ -61,10 +63,6 @@ function Tree(){
 			ok = true;
 		return ok;
 	}
-	/*
-	this.isEmpty = function(){
-		return if(this.root);
-	}*/
 
 	this.getElement = function(){
 		return this.root.element;
@@ -83,9 +81,6 @@ function Tree(){
 	}	
 
 	this.add = function(tree){
-		//console.log("\n Antes de add->"+tree.root.element+"\npreOrder e Fat root = "+this.root.fat);
-		//this.preOrder(tree);
-
 
 		var novoNo = tree.root;
 		var node = this.root;
@@ -104,19 +99,9 @@ function Tree(){
 		else{
 			ant.left = novoNo;
 		}
-		
-		//this.atualizaFat(this.root);
-		
-		// var tree = {
-		// 	root : this.root
-		// };
 
 		
 		this.balanceTree(this.root);
-
-		//console.log("\n Apos de add->"+tree.root.element+"\npreOrder e Fat root = "+this.root.fat);
-		//this.preOrder(tree);
-//	this.verificarBalanceamento(this.root);
 
 	}
 
@@ -214,12 +199,11 @@ function Tree(){
     this.find = function(){
             return this.find[arguments[0].constructor].apply(this, arguments);
         }     
-    //this.find[null] = function(){ return this.root}
 
     this.find[Number] = function(key, node){
 		if(node == null || node.key == key)
 			return node;
-		if(node.key < key)
+		if(node.key < key)	
 			return this.find(key, node.left);
 		else 
 			return this.find(key, node.right);
@@ -249,6 +233,13 @@ this.removeRec = function(node){
 				no.left = node.left;
 				no.right = node.right;
 				no.parent = parent;
+
+				if(no.left)
+					no.left.parent = no;
+				if(no.right)
+					no.right.parent = no;
+
+
 			}else if(node.left){
 				no = node.left;
 				console.log("tem um filho da esquerda");
@@ -272,10 +263,8 @@ this.removeRec = function(node){
 			node.parent = null;
 			node.left = null;
 			node.right = null;
-
-
-			//this.atualizaFat(this.root);		
-			this.balanceTree(this.root);
+	
+			
 			return node;
 			}
 
@@ -285,17 +274,17 @@ this.removeRec = function(node){
 			if (node.isExternal())
 				return min;	
 			if(node.left)
-				num1 = searchNext(node.left); 
+				num1 = this.searchNext(node.left); 
 			if(node.right)
-				num2 = searchNext(node.right); 
+				num2 = this.searchNext(node.right); 
 			
 
-			if(left==null)
-				return Math.min(min, right);
-			if(right == null)
-				return Math.min(min, left);
+			if(num1==null)
+				return Math.min(min, num2);
+			if(num2 == null)
+				return Math.min(min, num1);
 
-			return Math.min(Math.min(left, right), min);
+			return Math.min(Math.min(num1, num2), min);
 		}
 
 
@@ -333,8 +322,6 @@ this.removeRec = function(node){
 			
 			var aux = z;
 			z = z.right; 
-
-			//var y = z.right;
 			
 			aux.right = z.left;
 
@@ -364,14 +351,11 @@ this.removeRec = function(node){
 
 	this.rotationLeft = function(z){
 			
-			//console.log("rotationLeft  z = "+ z.element);
 			var aux = z;
 			var z = z.left;
-			//console.log("aux = "+aux.element+" z ="+z.element);
 
 			aux.left = z.right;
 			
-			//z.left = y.right;
 			if(aux.left)
 				aux.left.parent = aux;
 
@@ -441,12 +425,7 @@ function desenharcirculosletra(text, altura, largura,dir) {
      var canvas = document.getElementById('tree');
      var context = canvas.getContext('2d');
      
-     if(altura>0 && largura == 0)
-     	if(dir=="d")
-     		largura = 0.6;
-     	else
-     		largura = -0.6;
-     var x = 600 + largura*60;
+     var x = largura;
      var y = 61 +60*altura;
 
      context.fillStyle = "#0099FF";
@@ -462,53 +441,148 @@ function desenharcirculosletra(text, altura, largura,dir) {
 }
 
 
-function desenhaTree(node, altura, largura, dir){
+function desenhaTree(node, altura, fatAnt, dir){
 
-		desenharcirculosletra(node.key, altura, largura, dir);
-			if(node.right !=null){
-				desenhaTree(node.right, altura+1, largura-2, "d");
-			}
-			if(node.left !=null)
-				desenhaTree(node.left, altura+1, largura+2, "e");
-		}
+		var fat = 1200/Math.pow(2, altura+1);
+		var d =0, e = 0;
+		switch(dir){
+     	case "d":
+     		fat = largura = fatAnt-fat;
+     		break;
+     	case "e":
+     		fat = largura = fatAnt+fat;
+     		
+     		break;
+     	case "r":
+     		largura = fat;	
+     		break;
+     }
+
+     desenharcirculosletra(node.key, altura, largura, dir);
+
+     
+     console.log("Node = "+node.key+"Fat = "+fat+" altura = "+altura+" fatAnt = "+fatAnt+" direção = "+dir);
+	if(node.right !=null){
+		desenhaTree(node.right, altura+1, fat, "d");
+	}
+	if(node.left !=null)
+		fat = 
+		desenhaTree(node.left, altura+1, fat, "e");
+}
 
 function main(){
 
-	var root  = new Tree();
-	root.setElement("Root");
+	
+	var add = document.getElementById('add');
+	add.onclick = addElement;
+	var remove = document.getElementById('remove');
+	remove.onclick = removeElement;
+
+
+/**//*
+	arvore = new Tree();
+	arvore.setElement("Node 0");
+	
+	
 	var arrNode = new Array();
 	//root.root.key = 0;
 
-	for (var i = 1; i<=6;i++){
+	for (var i = 1; i<=5;i++){
 		arrNode[i] = new Tree();
 		arrNode[i].setElement("node "+i);
 		//arrNode[i].root.key = i*20+1;
-		root.add(arrNode[i]);
+		arvore.add(arrNode[i]);
 	}
 		/*console.log("preOrder");
-		root.preOrder(root);
+		root.preOrder(arvore);
 		console.log("\n posOrder");
-		root.posOrder(root);
+		root.posOrder(arvore);
 		console.log("\ninOrder");
-		root.inOrder(root);
-*/
+		root.inOrder(arvore);
+
 
 		//console.log("preOrder");
-		//root.preOrder(root);
+		//root.preOrder(arvore);
 		//console.log("\n\nelement = "+arrNode[1].root.element+" key = "+arrNode[1].root.key);
-		//console.log(root.remove(arrNode[1]));
+		//console.log(arvore.remove(arrNode[1]));
 		//console.log("\n\n\npreOrder");
-		//root.preOrder(root);
+		//root.preOrder(arvore);
 
 
-		console.log("\n\nNode root = "+root.getElement()+ " Key = "+root.root.key);
-		//root.balanceTree(root.root);
-		//root.atualizaFat(root.root);
-
+		
+		//root.balanceTree(arvore.root);
+		//root.atualizaFat(arvore.root);
+	
+		console.log("\n\nNode root = "+arvore.getElement()+ " Key = "+arvore.root.key);	
 		console.log("\n\npreOrder");
-		root.preOrder(root);
-		//console.log("Altura do root = "+ root.height(root.root)+" Fat do root = "+ root.root.fat+" Novo root "+ root.root.element);
-		desenhaTree(root.root, 0, 0);
+		arvore.preOrder(arvore);
+		//console.log("Altura do root = "+ arvore.height(arvore.root)+" Novo root "+ arvore.root.element);
+		
+		//desenhaTree(arvore.root, 0, 0);
+	*/
 }
+
+
+
+function addElement(){
+	var key = document.getElementById('addKey').value;
+	document.getElementById('addKey').value = '';
+
+	if(key!=''){
+	var script = document.createElement('canvas');
+	script.setAttribute('id', 'tree');
+	script.setAttribute('width', '1200');
+	script.setAttribute('height', '550');
+
+	var antScript = document.getElementById('tree');
+
+
+	var parent = document.getElementById('canvas');
+	parent.replaceChild(script, antScript);
+
+	var node = new Tree();
+	node.setElement('node de key: '+ key);
+	node.root.key = parseFloat(key);
+
+	if(arvore)
+		arvore.add(node);
+	else
+		arvore = node;
+	desenhaTree(arvore.root, 0, 0, 'r');
+}else
+	alert('digite um número inteiro');
+}
+
+function removeElement(){
+	var key = document.getElementById('removeKey').value;
+	document.getElementById('removeKey').value = '';
+
+	if(key!=''){
+	var script = document.createElement('canvas');
+	script.setAttribute('id', 'tree');
+	script.setAttribute('width', '1200');
+	script.setAttribute('height', '550');
+
+	var antScript = document.getElementById('tree');
+
+
+	var parent = document.getElementById('canvas');
+	parent.replaceChild(script, antScript);
+
+	key = parseFloat(key);
+	if(arvore)
+		var node = arvore.find(key, arvore.root);
+		if(node){
+			arvore.removeRec(node);
+			arvore.balanceTree(arvore.root);
+		}
+		else
+			alert('não encontrado');
+	desenhaTree(arvore.root, 0, 0, 'r');
+}else
+	alert('digite um número inteiro');
+}
+
+
 
 //main();
